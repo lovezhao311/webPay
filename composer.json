@@ -1,0 +1,13 @@
+{
+    "name": "luffyzhao/web-pay",
+    "description": "web pay",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Luffy Zhao",
+            "email": "luffyzhao@vip.126.com"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "require": {}
+}
