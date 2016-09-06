@@ -1,9 +1,12 @@
 <?php
 namespace LuffyZhao\Driver;
 
-use LuffyZhao\Library\Alipay;
+use LuffyZhao\Library\Payment;
 
-class WebAlipay extends Alipay
+class WebAlipay extends Payment
 {
-
+    public function create()
+    {
+        return 22;
+    }
 }
