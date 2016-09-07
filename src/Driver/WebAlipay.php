@@ -6,8 +6,8 @@ use LuffyZhao\Library\Payment;
 
 class WebAlipay extends Payment
 {
-    // protected $gateway = "https://mapi.alipay.com/gateway.do?";
-    protected $gateway = "https://openapi.alipaydev.com/gateway.do?";
+    protected $gateway = "https://mapi.alipay.com/gateway.do?";
+    // protected $gateway = "https://openapi.alipaydev.com/gateway.do?";
 
     // 支付方式所需字段与订单字段对照
     protected $requireKey = [
