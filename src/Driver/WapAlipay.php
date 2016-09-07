@@ -3,7 +3,7 @@ namespace LuffyZhao\Driver;
 
 use LuffyZhao\Library\AlipayPayment;
 
-class WebAlipay extends AlipayPayment
+class WapAlipay extends AlipayPayment
 {
     protected $gateway = "https://mapi.alipay.com/gateway.do?";
 
@@ -21,16 +21,12 @@ class WebAlipay extends AlipayPayment
         'subject'        => 'require|length:0,255|specialString',
         'total_fee'      => 'require|range:0.01,100000000',
     ];
-    // 页面跳转同步参数
-    protected $returnKey = ['is_success', 'sign_type', 'sign', 'out_trade_no', 'subject', 'payment_type', 'exterface', 'trade_no', 'trade_status', 'notify_id', 'notify_time', 'notify_type', 'seller_email', 'buyer_email', 'seller_id', 'buyer_id', 'total_fee', 'body', 'extra_common_param'];
-    // 服务器异步通知参数
-    protected $notifyKey = ['notify_time', 'notify_type', 'notify_id', 'sign_type', 'sign', 'out_trade_no', 'subject', 'payment_type', 'trade_no', 'trade_status', 'gmt_create', 'gmt_payment', 'gmt_close', 'refund_status', 'gmt_refund', 'seller_email', 'buyer_email', 'seller_id', 'buyer_id', 'price', 'total_fee', 'quantity', 'body', 'discount', 'is_total_fee_adjust', 'use_coupon', 'extra_common_param', 'business_scene'];
 
-    /**
-     * 处理订单参数
-     * @return [type] [description]
-     */
-    protected function _handleOrder()
+    protected $returnKey = ["is_success", "sign_type", "sign", "service", "notify_id", "notify_time", "notify_type", "out_trade_no", "trade_no", "subject", "payment_type", "trade_status", "seller_id", "total_fee", "body"];
+
+    protected $notifyKey = ["notify_time", "notify_type", "notify_id", "sign_type", "sign", "out_trade_no", "subject", "payment_type", "trade_no", "trade_status", "gmt_create", "gmt_payment", "gmt_close", "seller_email", "buyer_email", "seller_id", "buyer_id", "price", "total_fee", "quantity", "body", "discount", "is_total_fee_adjust", "use_coupon", "refund_status", "gmt_refund"];
+
+    public function _handleOrder()
     {
         return [
             'out_trade_no' => $this->order['out_trade_no'],
@@ -40,16 +36,5 @@ class WebAlipay extends AlipayPayment
             'show_url'     => $this->order['show_url'],
             'goods_type'   => $this->order['goods_type'],
         ];
-
     }
-
 }
-
-/**
-out_trade_no
-subject
-total_fee
-body 商品描述
-show_url 商品展示网址
-goods_type
- */

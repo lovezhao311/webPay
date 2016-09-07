@@ -1,15 +1,13 @@
 <?php
+
 return [
     // 是否剔除空值
     'reject_null_value' => true,
     // 返回方法 0 数组(默认) 1 url 2 直接跳转
     'return_type'       => '1',
-    // 密钥
-    "secret_key"        => "",
 
-    /**
-     * 业务参数
-     */
+    'cert_path'         => __DIR__ . '/../../cert/wapalipay/',
+
     'params'            => [
         "service"        => "alipay.wap.create.direct.pay.by.user",
         "partner"        => "2088102168675921",
@@ -26,5 +24,4 @@ return [
         // 是否支持APP
         "app_pay"        => "Y",
     ],
-
 ];

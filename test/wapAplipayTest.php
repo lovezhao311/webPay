@@ -7,9 +7,9 @@ use \LuffyZhao\Exception\PayException;
 
 $order = [
     "out_trade_no" => '20160907000023423',
-    'subject'      => 'dfasdfasdf',
+    'subject'      => '快播2年会员充值 600 元',
     "total_fee"    => 600,
-    "body"         => 'dfasdfasadsfasdf',
+    "body"         => '快播2年会员充值 600 元',
     "show_url"     => 'http://www.kuaibo.com/',
     "goods_type"   => '1',
 ];
@@ -17,17 +17,17 @@ $order = [
 $notifyUrl = 'http://www.kuaibo.com/notify_url.php';
 $returnUrl = 'http://www.kuaibo.com/return_url.php';
 
-$config = include '../src/Config/mobileWebAlipay.php';
+$config = include '../src/Config/wapAplipay.php';
 
 try {
 
-    $pay = \LuffyZhao\Pay::instance('MobileWebAlipay', $config)
+    $pay = \LuffyZhao\Pay::instance('WapAlipay', $config)
         ->setOrder($order)
         ->setNotify($notifyUrl)
         ->setReturn($returnUrl)
         ->handle();
 
-    print_r($pay);
+    echo $pay . "\n";
 
 } catch (PayException $payException) {
 

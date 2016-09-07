@@ -18,6 +18,47 @@ abstract class Payment
     protected $data = [];
 
     /**
+     * 处理支付数据
+     * @return [type] [description]
+     */
+    abstract public function handle();
+
+    /**
+     * 验证返回是否正确
+     * @return [type] [description]
+     */
+    abstract public function returnVerify();
+
+    /**
+     * 验证通知是否正确
+     * @return [type] [description]
+     */
+    abstract public function notifyVerify();
+
+    /**
+     * 签名
+     * @param  [type] $params [description]
+     * @return [type]         [description]
+     */
+    abstract protected function sign($params);
+
+    /**
+     * 通知地址
+     * 因为不同的支付方式可能参数名不一样
+     * 所以请在子类中重写这个方法
+     * @param [type] $url [description]
+     */
+    abstract public function setNotify($url);
+
+    /**
+     * 返回地址
+     * 因为不同的支付方式可能参数名不一样
+     * 所以请在子类中重写这个方法
+     * @param [type] $url [description]
+     */
+    abstract public function setReturn($url);
+
+    /**
      * 构造函数
      * @param [type] $config [description]
      */
@@ -117,46 +158,5 @@ abstract class Payment
 
         return $params;
     }
-
-    /**
-     * 处理支付数据
-     * @return [type] [description]
-     */
-    abstract public function handle();
-
-    /**
-     * 验证返回是否正确
-     * @return [type] [description]
-     */
-    abstract public function returnVerify();
-
-    /**
-     * 验证通知是否正确
-     * @return [type] [description]
-     */
-    abstract public function notifyVerify();
-
-    /**
-     * 签名
-     * @param  [type] $params [description]
-     * @return [type]         [description]
-     */
-    abstract protected function sign($params);
-
-    /**
-     * 通知地址
-     * 因为不同的支付方式可能参数名不一样
-     * 所以请在子类中重写这个方法
-     * @param [type] $url [description]
-     */
-    abstract public function setNotify($url);
-
-    /**
-     * 返回地址
-     * 因为不同的支付方式可能参数名不一样
-     * 所以请在子类中重写这个方法
-     * @param [type] $url [description]
-     */
-    abstract public function setReturn($url);
 
 }
