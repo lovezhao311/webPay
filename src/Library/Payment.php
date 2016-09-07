@@ -125,6 +125,18 @@ abstract class Payment
     abstract public function handle();
 
     /**
+     * 验证返回是否正确
+     * @return [type] [description]
+     */
+    abstract public function returnVerify();
+
+    /**
+     * 验证通知是否正确
+     * @return [type] [description]
+     */
+    abstract public function notifyVerify();
+
+    /**
      * 签名
      * @param  [type] $params [description]
      * @return [type]         [description]
@@ -146,4 +158,5 @@ abstract class Payment
      * @param [type] $url [description]
      */
     abstract public function setReturn($url);
+
 }

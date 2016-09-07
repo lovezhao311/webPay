@@ -1,11 +1,13 @@
 <?php
 namespace LuffyZhao\Driver;
 
+use LuffyZhao\Exception\PayException;
 use LuffyZhao\Library\Payment;
 
 class WebAlipay extends Payment
 {
-    protected $gateway = "https://mapi.alipay.com/gateway.do?";
+    // protected $gateway = "https://mapi.alipay.com/gateway.do?";
+    protected $gateway = "https://openapi.alipaydev.com/gateway.do?";
 
     // 支付方式所需字段与订单字段对照
     protected $requireKey = [
@@ -45,6 +47,89 @@ class WebAlipay extends Payment
                 $url    = $this->gateway . http_build_query($params);
 
                 header("Location:{$url}");
+                break;
+        }
+    }
+
+    /**
+     * 验证返回
+     * @return [type] [description]
+     */
+    public function returnVerify()
+    {
+        if (!isset($_GET['is_success'])) {
+            throw new PayException("该请求不是支付宝即时到账页面跳转同步通知的请求！");
+        }
+
+        $paramsKey = ['is_success', 'sign_type', 'sign', 'out_trade_no', 'subject', 'payment_type', 'exterface', 'trade_no', 'trade_status', 'notify_id', 'notify_time', 'notify_type', 'seller_email', 'buyer_email', 'seller_id', 'buyer_id', 'total_fee', 'body', 'extra_common_param'];
+        // 剔除不是支付宝即时到账页面跳转同步通知参数
+        $params = [];
+        foreach ($paramsKey as $key) {
+            if (isset($_GET[$key]) && (strlen($_GET[$key]) > 0)) {
+                $params[$key] = $_GET[$key];
+            }
+        }
+
+        if ($params['is_success'] != 'T') {
+            return [
+                'status'     => 0,
+                'order_code' => $params['out_trade_no'],
+                'pay_code'   => $params['trade_no'],
+            ];
+        }
+
+        // 签名验证
+        $sign = $this->sign($params);
+        if ($sign != $params['sign']) {
+            throw new PayException("该请求不是支付宝即时到账页面跳转同步通知的请求，原因：签名不正确！");
+        }
+
+        return [
+            'status'     => 1,
+            'order_code' => $params['out_trade_no'],
+            'pay_code'   => $params['trade_no'],
+        ];
+    }
+
+    /**
+     * 验证通知
+     * @return bool array 完成付款 false 未完成付款
+     */
+    public function notifyVerify()
+    {
+        $paramsKey = ['notify_time', 'notify_type', 'notify_id', 'sign_type', 'sign', 'out_trade_no', 'subject', 'payment_type', 'trade_no', 'trade_status', 'gmt_create', 'gmt_payment', 'gmt_close', 'refund_status', 'gmt_refund', 'seller_email', 'buyer_email', 'seller_id', 'buyer_id', 'price', 'total_fee', 'quantity', 'body', 'discount', 'is_total_fee_adjust', 'use_coupon', 'extra_common_param', 'business_scene'];
+
+        // 剔除不是支付宝即时到账页面跳转异步通知参数
+        $params = [];
+        foreach ($paramsKey as $key) {
+            if (isset($_GET[$key]) && (strlen($_GET[$key]) > 0)) {
+                $params[$key] = $_GET[$key];
+            }
+        }
+        // 签名验证
+        $sign = $this->sign($params);
+        if ($sign != $params['sign']) {
+            throw new PayException("该请求不是支付宝即时到账页面跳转异步通知的请求，原因：签名不正确！");
+        }
+
+        echo 'success';
+
+        switch ($params['refund_status']) {
+            case 'TRADE_SUCCESS':
+            case 'TRADE_PENDING':
+            case 'TRADE_FINISHED':
+                return [
+                    'status'     => 1,
+                    'order_code' => $params['out_trade_no'],
+                    'pay_code'   => $params['trade_no'],
+                ];
+                break;
+            default:
+                return [
+                    'status'     => 0,
+                    'order_code' => $params['out_trade_no'],
+                    'pay_code'   => $params['trade_no'],
+                ];
                 break;
         }
     }
