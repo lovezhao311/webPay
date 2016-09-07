@@ -5,7 +5,15 @@ return [
     'reject_null_value' => true,
     // 返回方法 0 数组(默认) 1 url 2 直接跳转
     'return_type'       => '1',
+    // md5 签名所用的key
     'secret_key'        => '',
+    // rsa 签名 公钥/密钥存放目录
+    'cert_path'         => __DIR__ . '/../../cert/wapalipay/',
+    //ca证书路径地址，用于curl中ssl校验
+    //请保证cacert.pem文件在当前文件夹目录中
+    'cacert'            => getcwd() . '\\cacert.pem',
+    // 是否严格验证 notify_id
+    'verify_notify_id'  => false,
 
     /**
      * 业务参数

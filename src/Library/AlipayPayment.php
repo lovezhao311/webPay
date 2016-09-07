@@ -8,7 +8,7 @@ use LuffyZhao\Exception\PayException;
  */
 abstract class AlipayPayment extends Payment
 {
-
+    protected $verifyNotifyGateway = "https://mapi.alipay.com/gateway.do?";
     /**
      * 处理支付数据
      * @return [type] [description]
@@ -95,6 +95,13 @@ abstract class AlipayPayment extends Payment
             throw new PayException("该请求不是支付宝即时到账页面跳转异步通知的请求，原因：签名不正确！");
         }
 
+        if ($this->config['verify_notify_id']) {
+            $responseTxt = $this->verifyNotify($params['notify_id']);
+            if (!preg_match("/true$/i", $responseTxt)) {
+                throw new Exception("该请求不是支付宝即时到账页面跳转异步通知的请求，原因：notify_id 无效！");
+            }
+        }
+
         switch ($params['refund_status']) {
             case 'TRADE_SUCCESS':
             case 'TRADE_PENDING':
@@ -122,6 +129,29 @@ abstract class AlipayPayment extends Payment
     protected function _handleConfig()
     {
         return $this->config['params'];
+    }
+
+    /**
+     * 验证NotifyId合法性
+     * @param  string $value [description]
+     * @return [type]        [description]
+     */
+    public function verifyNotify($notifyId)
+    {
+        if (!isset($this->config['cacert'])) {
+            throw new PayException("ca证书路径地址不存在!");
+        }
+
+        $params = [
+            'service'   => 'notify_verify',
+            'partner'   => $this->config['params']['partner'],
+            'notify_id' => $notifyId,
+        ];
+
+        $params    = array_map('urlencode', $params);
+        $url       = $this->verifyNotifyGateway . http_build_query($params);
+        $cacertUrl = $this->config['cacert'];
+        return $this->_getHttpResponseGET($url, $cacertUrl);
     }
 
     /**
@@ -272,6 +302,20 @@ abstract class AlipayPayment extends Payment
         $link = rtrim($link, '&');
 
         return $link;
+    }
+
+    private function _getHttpResponseGET($url, $cacertUrl)
+    {
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_HEADER, 0); // 过滤HTTP头
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 显示输出结果
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true); //SSL证书认证
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); //严格认证
+        curl_setopt($curl, CURLOPT_CAINFO, $cacertUrl); //证书地址
+        $responseText = curl_exec($curl);
+        curl_close($curl);
+
+        return $responseText;
     }
 
 }

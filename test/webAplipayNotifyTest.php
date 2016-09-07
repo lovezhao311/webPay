@@ -6,8 +6,10 @@ include '../vendor/autoload.php';
 
 use \LuffyZhao\Exception\PayException;
 
+$config = include '../src/Config/webAplipay.php';
+
 try {
-    $verify = \LuffyZhao\Pay::instance('WebAlipay')->notifyVerify();
+    $verify = \LuffyZhao\Pay::instance('WebAlipay', $config)->notifyVerify();
 
     if ($verify['status'] == 0) {
         throw new PayException("支付失败！");
