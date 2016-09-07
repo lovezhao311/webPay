@@ -36,6 +36,13 @@ abstract class Payment
     abstract public function notifyVerify();
 
     /**
+     * 通知 程序执行完后必须打印输出的内容
+     * @param  bool   $status [description]
+     * @return [type]         [description]
+     */
+    abstract public function notifyView(bool $status);
+
+    /**
      * 签名
      * @param  [type] $params [description]
      * @return [type]         [description]

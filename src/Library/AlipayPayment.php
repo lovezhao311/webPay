@@ -123,6 +123,16 @@ abstract class AlipayPayment extends Payment
     }
 
     /**
+     * 通知 程序执行完后必须打印输出的内容
+     * @param  [type] $status [description]
+     * @return [type]         [description]
+     */
+    public function notifyView(bool $status)
+    {
+        return $status ? 'success' : '';
+    }
+
+    /**
      * 处理配置参数
      * @return [type] [description]
      */
