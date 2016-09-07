@@ -6,6 +6,7 @@ class Verify
     const REG_HANDSET = "/^((86)[\+-]?)?^1\d{10}$/i";
     const REG_EMAIL   = "/^[_\.0-9a-z-a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,4}$/i";
     const REG_MONEY   = "/^\d+(\.\d{1,2})?$/";
+    const REG_SPECIAL = "/[\^\|\$\#]/";
     /**
      * 判断范围
      * @param  [type] $number [description]
@@ -23,6 +24,16 @@ class Verify
         }
 
         return ($input >= $min && $input <= $max) ? true : false;
+    }
+
+    /**
+     * 特殊字符
+     * @param  [type] $input [description]
+     * @return [type]        [description]
+     */
+    public static function specialString($input)
+    {
+        return preg_match(Verify::REG_SPECIAL, $input) ? false : true;
     }
 
     /**

@@ -4,7 +4,7 @@ namespace LuffyZhao\Driver;
 use LuffyZhao\Exception\PayException;
 use LuffyZhao\Library\Payment;
 
-class WebAlipay extends Payment
+class MobileWebAlipay extends Payment
 {
     // protected $gateway = "https://mapi.alipay.com/gateway.do?";
     protected $gateway = "https://openapi.alipaydev.com/gateway.do?";
@@ -142,17 +142,39 @@ class WebAlipay extends Payment
     protected function sign($params)
     {
         $signString = $this->_linkParams($params);
-
-        $sign = '';
+        $sign       = '';
         switch ($params['sign_type']) {
             case 'MD5':
                 $sign = md5($signString . $this->config['secret_key']);
                 break;
+            case 'RSA':
+                $sign = $this->rsa($signString);
             default:
                 # code...
                 break;
         }
 
+        return $sign;
+    }
+
+    /**
+     * rsa签名方式
+     * @param  [type] $signString [description]
+     * @return [type]             [description]
+     */
+    public function rsa($signString)
+    {
+        $privateKey = file_get_contents(__DIR__ . "/../../rsa/alipay/rsa_private_key.pem");
+        $res        = openssl_get_privatekey($privateKey);
+        if ($res) {
+            openssl_sign($signString, $sign, $res);
+        } else {
+            throw new PayException("私钥格式不正确");
+
+        }
+        openssl_free_key($res);
+        //base64编码
+        $sign = base64_encode($sign);
         return $sign;
     }
 
